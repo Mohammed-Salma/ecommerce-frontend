@@ -18,6 +18,10 @@ const Create = ({ placeholder }) => {
     const [gallery, setGallery] = useState([]);
     const [galleryImages, setGalleryImages] = useState([]);
     const navigate = useNavigate();
+    const [sizes, setSizes] = useState([]);
+    const [sizesChecked, setSizesChecked] = useState([]);
+
+
 
     const config = useMemo(
         () => ({
@@ -36,6 +40,22 @@ const Create = ({ placeholder }) => {
         setError,
         formState: { errors },
     } = useForm();
+
+    const fetchSizes = async () => {
+        const res = await fetch(`${apiUrl}/sizes`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Authorization': `Bearer ${adminToken()}`
+            },
+        })
+            .then(res => res.json())
+            .then(result => {
+                console.log(result);
+                setSizes(result.data)
+            })
+    }
 
     const saveProduct = async (data) => {
 
@@ -132,6 +152,7 @@ const Create = ({ placeholder }) => {
     useEffect(() => {
         fetchCategories();
         fetchBrands();
+        fetchSizes();
     }, [])
 
     return (
@@ -341,15 +362,43 @@ const Create = ({ placeholder }) => {
                                                 required: "This field is required."
                                             })}
                                             className={`form-select ${errors.is_featured && 'is-invalid'}`}>
-                                            <option value="1">Yes</option>
-                                            <option value="0">No</option>
+                                            <option value="yes">Yes</option>
+                                            <option value="no">No</option>
                                         </select>
                                         {
                                             errors.is_featured && <p className='invalid-feedback'>{errors.is_featured.message}</p>
                                         }
                                     </div>
 
+                                    <h3 className='py-3 border-bottom mb-3'>Sizes</h3>
 
+                                    <div className='mb-3'>
+                                        {
+                                            sizes && sizes.map(size => {
+                                                return (
+                                                    <div className='form-check-inline ps-2' key={`psize-${size.id}`}>
+                                                        <input
+                                                            {
+                                                            ...register("sizes")
+                                                            }
+                                                            checked={sizesChecked.includes(size.id)}
+                                                            onChange={(e) => {
+                                                                if (e.target.checked) {
+                                                                    setSizesChecked([...sizesChecked, size.id]);
+                                                                } else {
+                                                                    setSizesChecked(sizesChecked.filter(sid => size.id !== sid));
+                                                                }
+                                                            }}
+                                                            className='form-check-input' type="checkbox" value={size.id} id={`size-${size.id}`} />
+                                                        <label className='form-check-label ps-2' htmlFor={`size-${size.id}`}>
+                                                            {size.name}
+                                                        </label>
+                                                    </div>
+                                                )
+                                            })
+                                        }
+
+                                    </div>
 
                                     <h3 className='py-3 border-bottom mb-3'>Gallery</h3>
 
@@ -368,8 +417,8 @@ const Create = ({ placeholder }) => {
                                                         <div className='col-md-3' key={`image-${index}`}>
                                                             <div className='card shadow'>
                                                                 <img src={image} className='w-100 img-fluid' alt="" />
-                                                                <button className='btn btn-danger' onClick={() => deleteImage(image)}>Delete</button>
                                                             </div>
+                                                            <button className='btn btn-danger mt-3 w-100' onClick={() => deleteImage(image)}>Delete</button>
                                                         </div>
                                                     )
                                                 })

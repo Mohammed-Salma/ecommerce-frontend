@@ -5,6 +5,7 @@ import Sidebar from '../../common/Sidebar'
 import { adminToken, apiUrl } from '../../common/http'
 import Loader from '../../common/Loader'
 import Nostate from '../../common/Nostate'
+import { toast } from 'react-toastify'
 
 const Show = () => {
 
@@ -30,6 +31,29 @@ const Show = () => {
                     console.log("Something went wrong!");
                 }
             })
+    }
+
+    const deleteProduct = async (id) => {
+        if (confirm('Are you sure you want to delete this product?')) {
+            const res = await fetch(`${apiUrl}/products/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${adminToken()}`
+                },
+            })
+                .then(res => res.json())
+                .then(result => {
+                    if (result.status == 200) {
+                        const newProducts = products.filter(product => product.id !== id)
+                        setProducts(newProducts);
+                        toast.success(result.message);
+                    } else {
+                        toast.error(result.message);
+                    }
+                })
+        }
     }
 
     useEffect(() => {
