@@ -52,6 +52,7 @@ const Edit = ({ placeholder }) => {
                     console.log(result);
                     setProductImages(result.data.product_images)
                     setSizesChecked(result.productSizes)
+                    setContent(result.data.description ?? '')
                     reset({
                         title: result.data.title,
                         category: result.data.category_id,
@@ -351,12 +352,12 @@ const Edit = ({ placeholder }) => {
 
                                         <div className='col-md-6'>
                                             <div className='mb-3'>
-                                                <label htmlFor="" className='form-label'>Discounted Price</label>
+                                                <label htmlFor="" className='form-label'>Compare Price</label>
                                                 <input
                                                     {
                                                     ...register("compare_price")
                                                     }
-                                                    type="text" placeholder='Discounted Price' className='form-control' />
+                                                    type="text" placeholder='Compare Price' className='form-control' />
                                             </div>
                                         </div>
                                     </div>
