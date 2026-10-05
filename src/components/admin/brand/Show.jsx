@@ -26,7 +26,7 @@ const Show = () => {
                 setLoader(false);
                 //console.log(result);
                 if (result.status == 200) {
-                    setBrands(result.brands);
+                    setBrands(result.data);
                 } else {
                     console.log("Something went wrong!");
                 }

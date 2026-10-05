@@ -25,7 +25,7 @@ const Show = () => {
             .then(result => {
                 setLoader(false);
                 if (result.status == 200) {
-                    setCategories(result.categories);
+                    setCategories(result.data);
                 } else {
                     console.log("Something went wrong!");
                 }
