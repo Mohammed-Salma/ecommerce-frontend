@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Layout from './common/Layout';
 import { Rating } from 'react-simple-star-rating'
 import { Link, useParams } from 'react-router-dom';
@@ -15,6 +15,8 @@ import ProductImgOne from '../assets/images/mens/five.jpg';
 import ProductImgTwo from '../assets/images/mens/six.jpg';
 import ProductImgThree from '../assets/images/mens/seven.jpg';
 import { apiUrl } from './common/http';
+import { CartContext } from './context/Cart';
+import { toast } from 'react-toastify';
 
 const Product = () => {
     const [thumbsSwiper, setThumbsSwiper] = useState(null);
@@ -22,7 +24,9 @@ const Product = () => {
     const [product, serProduct] = useState([]);
     const [productImages, setProductImages] = useState([]);
     const [productSizes, setProductSizes] = useState([]);
+    const [sizeSelected, setSizeSelected] = useState(null);
     const params = useParams();
+    const { addToCart } = useContext(CartContext);
 
 
     const fetchProduct = () => {
@@ -43,6 +47,20 @@ const Product = () => {
                     console.log("Something went wrong!");
                 }
             })
+    }
+
+    const handleAddToCart = () => {
+        if (productSizes.length > 0) {
+            if (sizeSelected == null) {
+                toast.error("Please select a size!")
+            } else {
+                addToCart(product, sizeSelected)
+                toast.success("Product successfully added to cart")
+            }
+        } else {
+            addToCart(product, null)
+            toast.success("Prod successfully added to cart")
+        }
     }
 
     useEffect(() => {
@@ -87,7 +105,7 @@ const Product = () => {
                                             productImages && productImages.map(product_image => {
                                                 return (
 
-                                                    <SwiperSlide key={product_image.id}>
+                                                    <SwiperSlide key={`image-${product_image.id}`}>
                                                         <div className='content'>
                                                             <img
                                                                 src={product_image.image_url}
@@ -120,7 +138,7 @@ const Product = () => {
                                             productImages && productImages.map(product_image => {
                                                 return (
 
-                                                    <SwiperSlide key={product_image.id}>
+                                                    <SwiperSlide key={`image-sm-${product_image.id}`}>
                                                         <div className='content'>
                                                             <img
                                                                 src={product_image.image_url}
@@ -165,7 +183,12 @@ const Product = () => {
                                 {
                                     productSizes && productSizes.map(product_size => {
                                         return (
-                                            <button key={product_size.id} className='btn btn-size me-2'>{product_size.size.name}</button>
+                                            <button
+                                                onClick={() => setSizeSelected(product_size.size.name)}
+                                                key={`p-size-${product_size.id}`}
+                                                className={`btn btn-size me-2 ${sizeSelected == product_size.size.name ? 'active' : ''}`}>
+
+                                                {product_size.size.name}</button>
                                         )
                                     })
                                 }
@@ -174,7 +197,9 @@ const Product = () => {
                         </div>
 
                         <div className='add-to-cart my-4'>
-                            <button className='btn btn-primary text-uppercase'>Add To Cart</button>
+                            <button
+                                onClick={() => handleAddToCart()}
+                                className='btn btn-primary text-uppercase'>Add To Cart</button>
                         </div>
                         <hr />
 
@@ -206,7 +231,7 @@ const Product = () => {
 
                 </div>
             </div>
-        </Layout>
+        </Layout >
     )
 }
 
