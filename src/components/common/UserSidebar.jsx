@@ -13,7 +13,7 @@ export const UserSidebar = () => {
                         <Link to="/account">Account</Link>
                     </li>
                     <li>
-                        <Link to="#">Order</Link>
+                        <Link to="/account/orders">Orders</Link>
                     </li>
                     <li>
                         <Link to="#">Change Password</Link>

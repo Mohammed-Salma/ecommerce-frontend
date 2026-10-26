@@ -78,7 +78,7 @@ const ShowOrders = () => {
                                             {
                                                 orders.map((order) => {
                                                     return (
-                                                        <tr key={order.id}>
+                                                        <tr key={`order-${order.id}`}>
                                                             <td>
                                                                 <Link to={`/admin/orders/${order.id}`}>{order.id}</Link>
                                                             </td>
