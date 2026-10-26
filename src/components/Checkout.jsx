@@ -19,9 +19,33 @@ const Checkout = () => {
         register,
         handleSubmit,
         watch,
+        reset,
         setError,
         formState: { errors },
-    } = useForm();
+    } = useForm({
+        defaultValues: async () => {
+            fetch(`${apiUrl}/get-profile-details`, {
+                method: 'GET',
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "Authorization": `Bearer ${userToken()}`
+                }
+            })
+                .then(res => res.json())
+                .then(result => {
+                    reset({
+                        name: result.data.name,
+                        email: result.data.email,
+                        address: result.data.address,
+                        city: result.data.city,
+                        state: result.data.state,
+                        zip: result.data.zip,
+                        mobile: result.data.mobile,
+                    })
+                })
+        }
+    });
 
     const processOrder = (data) => {
         if (paymentMethod == 'cod') {
